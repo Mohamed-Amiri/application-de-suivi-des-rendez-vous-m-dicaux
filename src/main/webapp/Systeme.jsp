@@ -3,237 +3,203 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Gestion des Rendez-vous Médicaux</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Gestion des Rendez-vous</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
     <style>
-        .tab-button {
-            border: none;
-            padding: 10px 20px;
-            margin: 0 5px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .tab-button.active {
-            background-color: #0d6efd;
-            color: white;
-        }
-        .tab-button:not(.active) {
+        body {
             background-color: #f8f9fa;
         }
-        .alert-float {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            animation: slideIn 0.5s ease-out;
+        .container {
+            margin-top: 20px;
         }
-        @keyframes slideIn {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div class="container mt-4">
-        <!-- Navigation -->
-        <div class="text-center mb-4">
-            <h1 class="mb-4">Gestion des Rendez-vous Médicaux</h1>
-            <div class="d-flex justify-content-center gap-2">
-                <button class="tab-button active" onclick="showTab('booking')">
-                    Prendre RDV
-                </button>
-                <button class="tab-button" onclick="showTab('list')">
-                    Mes Rendez-vous <span id="appointmentCount" class="badge bg-secondary">0</span>
-                </button>
-            </div>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Gestion RDV</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" id="accueilLink" href="#">Accueil</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="mesRDVLink" href="#">Mes Rendez-vous</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="mesRDVMedecinLink" href="#">Rendez-vous Médecin</a>
+                </li>
+            </ul>
         </div>
+    </div>
+</nav>
 
-        <!-- Alerts -->
-        <div id="successAlert" class="alert alert-success alert-float" style="display: none;"></div>
-        <div id="errorAlert" class="alert alert-danger alert-float" style="display: none;"></div>
+<!-- Main Content -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <h3 class="text-center mt-3">Prendre un Rendez-vous</h3>
 
-        <!-- Formulaire de rendez-vous -->
-        <div id="bookingSection" class="card">
-            <div class="card-header">
-                <h5 class="mb-0">Nouveau Rendez-vous</h5>
-            </div>
-            <div class="card-body">
-                <form id="appointmentForm">
-                    <div class="mb-3">
-                        <label class="form-label">Nom complet</label>
-                        <input type="text" class="form-control" name="username" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-control" name="email" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Téléphone</label>
-                        <input type="tel" class="form-control" name="telephone" pattern="[0-9]{10}" required>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Date</label>
-                            <input type="date" class="form-control" name="date" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Heure</label>
-                            <input type="time" class="form-control" name="time" required>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Motif</label>
-                        <textarea class="form-control" name="reason" rows="3" required></textarea>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary w-100">
-                        Confirmer le rendez-vous
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Liste des rendez-vous -->
-        <div id="listSection" class="card" style="display: none;">
-            <div class="card-header">
-                <h5 class="mb-0">Mes Rendez-vous</h5>
-            </div>
-            <div class="card-body">
-                <div id="appointmentList">
-                    <div class="text-center text-muted py-5" id="emptyState">
-                        <p>Vous n'avez aucun rendez-vous programmé</p>
-                    </div>
+            <!-- Appointment Form (Patient) -->
+            <form id="appointmentForm">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Nom d'utilisateur:</label>
+                    <input type="text" class="form-control" id="username" required>
                 </div>
-            </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <input type="email" class="form-control" id="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="telephone" class="form-label">Téléphone:</label>
+                    <input type="tel" class="form-control" id="telephone" required>
+                </div>
+                <div class="mb-3">
+                    <label for="date" class="form-label">Date:</label>
+                    <input type="date" class="form-control" id="date" required>
+                </div>
+                <div class="mb-3">
+                    <label for="heure" class="form-label">Heure:</label>
+                    <input type="time" class="form-control" id="heure" required>
+                </div>
+                <div class="mb-3">
+                    <label for="motif" class="form-label">Motif:</label>
+                    <input type="text" class="form-control" id="motif" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-calendar-check"></i> Prendre Rendez-vous
+                </button>
+            </form>
         </div>
     </div>
 
-    <script>
-        // Configuration initiale
-        let appointments = JSON.parse(localStorage.getItem('appointments') || '[]');
-        const phonePattern = /^0[1-9]\d{8}$/;
+    <!-- Patient's Appointment List (Hidden Initially) -->
+    <div class="row mt-4 hidden" id="appointmentListContainer">
+        <div class="col-md-8 mx-auto">
+            <h3 class="text-center">Mes Rendez-vous</h3>
+            <ul class="list-group" id="appointmentList">
+                <!-- Appointments will be added here dynamically -->
+            </ul>
+        </div>
+    </div>
 
-        // Échappement HTML
-        const escapeHtml = (text) => {
-            const map = {
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#039;'
-            };
-            return text.replace(/[&<>"']/g, (m) => map[m]);
-        };
+    <!-- Doctor's Appointment List (Hidden Initially) -->
+    <div class="row mt-4 hidden" id="doctorAppointmentListContainer">
+        <div class="col-md-8 mx-auto">
+            <h3 class="text-center">Rendez-vous à venir</h3>
+            <ul class="list-group" id="doctorAppointmentList">
+                <!-- Doctor's Appointments will be added here dynamically -->
+            </ul>
+        </div>
+    </div>
+</div>
 
-        // Formatage de date
-        const formatDate = (dateString) => {
-            const options = {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            };
-            return new Date(dateString).toLocaleDateString('fr-FR', options);
-        };
+<!-- Bootstrap JS Bundle (Includes Popper.js) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-        // Gestion des onglets
-        function showTab(tabName) {
-            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            document.getElementById('bookingSection').style.display = 
-                tabName === 'booking' ? 'block' : 'none';
-            document.getElementById('listSection').style.display = 
-                tabName === 'list' ? 'block' : 'none';
-        }
+<!-- JavaScript for Handling Appointments -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const appointmentForm = document.getElementById("appointmentForm");
+        const appointmentListContainer = document.getElementById("appointmentListContainer");
+        const appointmentList = document.getElementById("appointmentList");
+        const doctorAppointmentListContainer = document.getElementById("doctorAppointmentListContainer");
+        const doctorAppointmentList = document.getElementById("doctorAppointmentList");
 
-        // Gestion du formulaire
-        document.getElementById('appointmentForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData.entries());
-            
-            if (!phonePattern.test(data.telephone)) {
-                showAlert('error', 'Numéro de téléphone invalide');
-                return;
+        // Handle Patient's Appointment Submission
+        appointmentForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            // Get input values
+            const username = document.getElementById("username").value;
+            const email = document.getElementById("email").value;
+            const telephone = document.getElementById("telephone").value;
+            const date = document.getElementById("date").value;
+            const heure = document.getElementById("heure").value;
+            const motif = document.getElementById("motif").value;
+
+            if (username && email && telephone && date && heure && motif) {
+                // Create new appointment item for Patient
+                const listItem = document.createElement("li");
+                listItem.className = "list-group-item d-flex justify-content-between align-items-center";
+                listItem.innerHTML = `
+                        <div>
+                            <strong>${date} - ${heure}</strong>
+                            <p class="mb-0">${motif}</p>
+                            <small>${username} - ${email} - ${telephone}</small>
+                        </div>
+                        <button class="btn btn-danger btn-sm delete-btn"><i class="fas fa-trash-alt"></i></button>
+                    `;
+
+                // Add event listener to delete button (Patient)
+                listItem.querySelector(".delete-btn").addEventListener("click", function () {
+                    listItem.remove();
+                    if (appointmentList.children.length === 0) {
+                        appointmentListContainer.classList.add("hidden");
+                    }
+                });
+
+                // Append appointment to the list
+                appointmentList.appendChild(listItem);
+
+                // Show appointment list container
+                appointmentListContainer.classList.remove("hidden");
+
+                // Clear form
+                appointmentForm.reset();
             }
-
-            const appointment = {
-                id: Date.now(),
-                ...data,
-                datetime: \`\${data.date}T\${data.time}\`
-            };
-
-            appointments.push(appointment);
-            localStorage.setItem('appointments', JSON.stringify(appointments));
-            
-            updateAppointmentList();
-            showAlert('success', 'Rendez-vous enregistré !');
-            e.target.reset();
         });
 
-        // Mise à jour de la liste
-        function updateAppointmentList() {
-            const container = document.getElementById('appointmentList');
-            const emptyState = document.getElementById('emptyState');
-            const countBadge = document.getElementById('appointmentCount');
-            
-            countBadge.textContent = appointments.length;
-            container.innerHTML = appointments.length ? '' : emptyState.outerHTML;
+        // Simulating doctor's upcoming appointments (This can be dynamic)
+        const doctorAppointments = [
+            { date: '2025-02-22', heure: '09:00', motif: 'Consultation générale' },
+            { date: '2025-02-23', heure: '10:00', motif: 'Examen de suivi' },
+        ];
 
-            appointments.sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
-
-            container.innerHTML = appointments.map(apt => \`
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="mb-1">\${escapeHtml(apt.username)}</h6>
-                                <p class="text-muted mb-1">
-                                    \${formatDate(apt.datetime)}
-                                </p>
-                                <p class="text-muted mb-1">\${escapeHtml(apt.reason)}</p>
-                                <small class="text-muted">\${apt.email} - \${apt.telephone}</small>
-                            </div>
-                            <button class="btn btn-outline-danger btn-sm" 
-                                    onclick="deleteAppointment(\${apt.id})">
-                                ✕
-                            </button>
-                        </div>
+        doctorAppointments.forEach(function (appointment) {
+            const listItem = document.createElement("li");
+            listItem.className = "list-group-item d-flex justify-content-between align-items-center";
+            listItem.innerHTML = `
+                    <div>
+                        <strong>${appointment.date} - ${appointment.heure}</strong>
+                        <p class="mb-0">${appointment.motif}</p>
                     </div>
-                </div>
-            \`).join('');
-        }
+                    <button class="btn btn-warning btn-sm reschedule-btn"><i class="fas fa-calendar-edit"></i> Reporter</button>
+                    <button class="btn btn-danger btn-sm cancel-btn"><i class="fas fa-trash-alt"></i> Annuler</button>
+                `;
 
-        // Suppression de rendez-vous
-        window.deleteAppointment = (id) => {
-            appointments = appointments.filter(apt => apt.id !== id);
-            localStorage.setItem('appointments', JSON.stringify(appointments));
-            updateAppointmentList();
-            showAlert('info', 'Rendez-vous annulé');
-        };
+            // Add event listener to reschedule and cancel buttons for doctor
+            listItem.querySelector(".reschedule-btn").addEventListener("click", function () {
+                alert("Rendez-vous reporté !");
+            });
+            listItem.querySelector(".cancel-btn").addEventListener("click", function () {
+                listItem.remove();
+                if (doctorAppointmentList.children.length === 0) {
+                    doctorAppointmentListContainer.classList.add("hidden");
+                }
+            });
 
-        // Gestion des alertes
-        function showAlert(type, message) {
-            const alert = document.getElementById(\`\${type}Alert\`);
-            alert.textContent = message;
-            alert.style.display = 'block';
-            setTimeout(() => alert.style.display = 'none', 3000);
-        }
+            doctorAppointmentList.appendChild(listItem);
+        });
 
-        // Initialisation
-        updateAppointmentList();
-    </script>
+        // Show doctor's appointment list
+        doctorAppointmentListContainer.classList.remove("hidden");
+    });
+</script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
