@@ -10,4 +10,10 @@
         <el-ignored>true</el-ignored>
     </jsp-property-group>
 </jsp-config>
+
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.33</version>  
+</dependency>
 </project>
